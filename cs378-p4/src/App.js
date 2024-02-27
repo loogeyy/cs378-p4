@@ -35,7 +35,7 @@ function App() {
 
   const fetchAPIData = async () => {
     const city = cities.find(cityName => cityName.name === currentCity);
-    const BASE_URL = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.long}&hourly=temperature_2m&temperature_unit=fahrenheit&forecast_days=1`;
+    const BASE_URL = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.long}&hourly=temperature_2m&temperature_unit=fahrenheit&past_days=1&forecast_days=1`;
 
     try {
       const response = await fetch(BASE_URL);
@@ -90,9 +90,9 @@ function App() {
         })}
       </div>
       <div className='container'>
-        <p>Weather forecast for {currentCity}</p>
+        <h1>Weather forecast for {currentCity}</h1>
         <div className="row">
-          <div className='col'>
+          <div className='col-5'>
             <h2>Time</h2>
             <ul>
             {time.map((t) => {
@@ -105,7 +105,7 @@ function App() {
             </ul>
 
           </div>
-          <div className='col'>
+          <div className='col-4'>
             <h2>Temperature</h2>
             <ul>
               {
