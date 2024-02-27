@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, cities, setCities }) => {
-    const [lat, setLat] = useState(0);
-    const [long, setLong] = useState(0);
+const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, cities, setCities, setNoResults }) => {
+    const [lat, setLat] = useState();
+    const [long, setLong] = useState();
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
 
     const fetchAPIData = async () => {
-        console.log("CURRENT CITY", currentCity);
-        const BASE_URL = `https://geocoding-api.open-meteo.com/v1/search?name=${currentCity}&count=10&language=en&format=json`;
+        console.log("CURRENT INPUT", inputValue);
+        const BASE_URL = `https://geocoding-api.open-meteo.com/v1/search?name=${inputValue}&count=10&language=en&format=json`;
 
         try {
             const response = await fetch(BASE_URL);
@@ -25,6 +25,8 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
                 console.log("LAT", results[0].latitude);
                 console.log("LONG", results[0].longitude);
                 console.log("length", results);
+            } else {
+                setNoResults(true);
             }
         }
         catch (err) {
@@ -34,12 +36,12 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
 
     useEffect(() => {
         fetchAPIData();
-    }, [currentCity])
+    }, [inputValue])
 
     const handleAddClick = () => {
-
         const cleanInput = inputValue.trim();
-        if (cleanInput.length > 0) {
+        if (cleanInput.length > 0 && lat && long) {
+            setNoResults(false);
             if (!cities.find(cityName => cityName.name.toLowerCase() === cleanInput.toLowerCase())) {
                 console.log("FOUND NEW CITY", cleanInput);
                 setCurrentCity(cleanInput);
@@ -55,7 +57,8 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
     };
 
     return (
-        <div>
+        <div className="row">
+            <div className='col'>
             <Form.Group controlId="inputBox">
                 <Form.Control
                     type="text"
@@ -64,9 +67,12 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
                     onChange={handleInputChange}
                 />
             </Form.Group>
+            </div>
+            <div className='col'>
             <Button variant="primary" onClick={handleAddClick}>
                 +
             </Button>
+            </div>
         </div>
     );
 }

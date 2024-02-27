@@ -1,9 +1,11 @@
 import Button from 'react-bootstrap/Button';
 
-const CityButton = ({city}) => {
+const CityButton = ({city, changeCity}) => {
     return (
         <div className="col">
-        <Button variant="outline-dark">{city}</Button>
+        <Button variant="outline-dark"
+        onClick={() => changeCity(city)}
+        >{city}</Button>
         </div>
     )
 };
