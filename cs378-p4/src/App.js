@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import CityButton from './components/CityButton';
 import { useEffect, useState } from 'react';
@@ -40,7 +39,6 @@ function App() {
     try {
       const response = await fetch(BASE_URL);
       const json = await response.json();
-      // console.log("WEATHER", json.hourly.time);
       setTemp(json.hourly.temperature_2m);
       setTime(json.hourly.time)
     }
@@ -59,15 +57,15 @@ function App() {
 
   }, [currentCity]);
 
-  const toggleModal = () => {
-    setNoResults(!noResults);
-  };
-
   return (
-    <div className="container">
-    <div className='row'>
-      {noResults ? <Modal onClose={toggleModal}>
-        </Modal> : ''}
+    <div className="container mt-4">
+      <div className="row row-cols-3 justify-content-center">
+        {cities.map((city, index) => (
+          <div key={index} className="row justify-content-center mb-3">
+            <CityButton city={city.name} changeCity={changeCity}/>
+          </div>
+        ))}
+      </div>
       <AddNewCity
         inputValue={input}
         setInputValue={setInput}
@@ -78,42 +76,39 @@ function App() {
         setNoResults={setNoResults}>
         
       </AddNewCity>
-      </div>
-      <div className='row'>
-        {cities.map((city) => {
-          return (
-            <CityButton 
-            city={city.name}
-            changeCity={changeCity}
-            ></CityButton>
-          )
-        })}
-      </div>
       <div className='container'>
-        <h1>Weather forecast for {currentCity}</h1>
-        <div className="row">
-          <div className='col-5'>
-            <h2>Time</h2>
-            <ul>
+      <div className="row text-center mt-4">
+        <h1 className=''>Weather Forecast for {currentCity}</h1>
+      </div>
+        <div className="row justify-content-center">
+          <div className='col mt-4'>
+            <h2 className="text-center"
+            >Time</h2>
+            <p className="text-center time">
             {time.map((t) => {
-              const datetime = new Date(t);
-              const currentTime = new Date();
-              const absoluteTime = new Date(currentTime.getTime() - (datetime * 60 * 60 * 1000));
-              const formattedTime = absoluteTime.toLocaleString();
-              return <p>{t}</p>;
+              const dateTime = new Date(t);
+              const hours = dateTime.getHours() % 12 || 12;
+              const minutes = dateTime.getMinutes();
+              const amOrPm = dateTime.getHours() < 12 ? 'AM' : 'PM';
+              const month = dateTime.getMonth() + 1; 
+              const day = dateTime.getDate();
+              
+              const result = `(${month}/${day}) ${hours}:${minutes < 10 ? '0' : ''}${minutes} ${amOrPm}`;
+              
+              return <p>{result}</p>;
             })}
-            </ul>
+            </p>
 
           </div>
-          <div className='col-4'>
-            <h2>Temperature</h2>
-            <ul>
+          <div className='col mt-4'>
+            <h2 className="text-center">Temperature</h2>
+            <p className="text-center">
               {
                 temp.map((t) => (
                   <p>{t} °F</p>
               ))
               }
-           </ul>
+           </p>
           </div>
         </div>
       </div>
