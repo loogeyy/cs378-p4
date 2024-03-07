@@ -9,6 +9,7 @@ function App() {
   const [noResults, setNoResults] = useState(false);
   const [input, setInput] = useState('');
   const [currentCity, setCurrentCity] = useState('Austin');
+  const [errorMsg, setErrorMsg] = useState('');
   const [cities, setCities] = useState(
     [
       {
@@ -34,7 +35,7 @@ function App() {
 
   const fetchAPIData = async () => {
     const city = cities.find(cityName => cityName.name === currentCity);
-    const BASE_URL = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.long}&hourly=temperature_2m&temperature_unit=fahrenheit&past_days=1&forecast_days=1`;
+    const BASE_URL = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.long}&hourly=temperature_2m&temperature_unit=fahrenheit&forecast_days=1`;
 
     try {
       const response = await fetch(BASE_URL);
@@ -50,6 +51,7 @@ function App() {
   const changeCity = (cityName) => {
     console.log("city name", cityName);
     setCurrentCity(cityName);
+    setErrorMsg("");
   };
 
   useEffect(() => {
@@ -73,7 +75,9 @@ function App() {
         setCurrentCity={setCurrentCity}
         cities={cities}
         setCities={setCities}
-        setNoResults={setNoResults}>
+        setNoResults={setNoResults}
+        errorMsg={errorMsg}
+        setErrorMsg={setErrorMsg}>
         
       </AddNewCity>
       <div className='container'>

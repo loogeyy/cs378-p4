@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, cities, setCities, setNoResults }) => {
+const AddNewCity = ({ inputValue, setInputValue, setCurrentCity, cities, setCities, setNoResults, errorMsg, setErrorMsg }) => {
     const [name, setName] = useState();
     const [lat, setLat] = useState();
     const [long, setLong] = useState();
-    const [inv, setInv] = useState(false);
+
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
@@ -28,6 +28,9 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
                 console.log("length", results);
             } else {
                 setNoResults(true);
+                setLat();
+                setLong();
+                setName();
             }
         }
         catch (err) {
@@ -43,10 +46,12 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
         console.log("inputVal", inputValue);
         const cleanInput = inputValue.trim();
         if (cleanInput.length > 0) {
+            console.log("CITY", name);
+            console.log("LAT", lat);
+            console.log("LONG", long);
             if (lat && long) {
-                setInv(false);
                 if (!cities.find(cityName => cityName.name.toLowerCase() === name.toLowerCase())) {
-                    console.log("FOUND NEW CITY", cleanInput);
+                    setErrorMsg('');
                     setCurrentCity(name);
                     const newCity = {
                         name: name,
@@ -55,9 +60,16 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
                     };
                     setCities([...cities, newCity]);
                 }
-            } else {
-                setInv(true);
+                else {
+                    setErrorMsg("This city has already been added.");
+                }  
+            } 
+            else {
+                setErrorMsg("Could not find weather for specified city.");
             }
+        }
+        else {
+            setErrorMsg("Please enter non-empty input.")
         }
         setInputValue('');
     };
@@ -65,8 +77,8 @@ const AddNewCity = ({ inputValue, setInputValue, currentCity, setCurrentCity, ci
     return (
         <div className="container mt-3">
             <div className="row">
-                <div className="row">
-                    {inv ? <p>Could not find weather for specified city.</p> : ""}
+                <div className="row justify-content-center text-center">
+                    <p>{errorMsg}</p>
                 </div>
                 <div className='row justify-content-center'>
                     <div className='col d-flex justify-content-center align-items-center'>
